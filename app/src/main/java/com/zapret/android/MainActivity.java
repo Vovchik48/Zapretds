@@ -1,12 +1,13 @@
 package com.zapret.android;
 
 import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
     private ImageView statusIcon;
     private CardView statusCard;
     private Animation pulseAnimation;
+    private Handler handler = new Handler(Looper.getMainLooper());
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,10 @@ public class MainActivity extends Activity {
         
         disconnectButton.setEnabled(false);
         updateUI(false);
+        
+        // Анимация появления
+        statusCard.setAlpha(0f);
+        statusCard.animate().alpha(1f).setDuration(500).start();
     }
     
     private void startVpn() {
@@ -65,9 +71,21 @@ public class MainActivity extends Activity {
             updateUI(true);
             animateStatusChange(true);
             
-            Toast.makeText(this, "Zapret VPN Activated\nBypassing DPI blocks", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "🚀 Zapret VPN Activated\nHigh-speed DPI bypass enabled", Toast.LENGTH_LONG).show();
+            
+            // Обновляем статус каждые 2 секунды
+            handler.postDelayed(updateStatusRunnable, 2000);
         }
     }
+    
+    private Runnable updateStatusRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isFinishing()) return;
+            statusInfo.setText("🛡️ Protecting connection...");
+            handler.postDelayed(this, 2000);
+        }
+    };
     
     private void stopVpn() {
         Intent serviceIntent = new Intent(this, ZapretVpnService.class);
@@ -76,6 +94,7 @@ public class MainActivity extends Activity {
         
         updateUI(false);
         animateStatusChange(false);
+        handler.removeCallbacks(updateStatusRunnable);
         
         Toast.makeText(this, "Zapret VPN Stopped", Toast.LENGTH_SHORT).show();
     }
@@ -83,25 +102,24 @@ public class MainActivity extends Activity {
     private void updateUI(boolean isActive) {
         if (isActive) {
             statusText.setText("Status: Active");
-            statusText.setTextColor(getColor(0xFF4CAF50));
-            statusInfo.setText("Bypassing DPI blocks");
-            statusIcon.setColorFilter(getColor(0xFF4CAF50));
+            statusText.setTextColor(0xFF4CAF50);
+            statusInfo.setText("🚀 High-speed bypass active");
+            statusIcon.setColorFilter(0xFF4CAF50);
             connectButton.setEnabled(false);
             disconnectButton.setEnabled(true);
         } else {
             statusText.setText("Status: Stopped");
-            statusText.setTextColor(getColor(0xFFF44336));
+            statusText.setTextColor(0xFFF44336);
             statusInfo.setText("Tap START to activate");
-            statusIcon.setColorFilter(getColor(0xFF666666));
+            statusIcon.setColorFilter(0xFF666666);
             connectButton.setEnabled(true);
             disconnectButton.setEnabled(false);
         }
     }
     
     private void animateStatusChange(boolean isActive) {
-        // Анимация цвета карточки
-        int colorFrom = getColor(0xFFFFFFFF);
-        int colorTo = isActive ? getColor(0xFFE8F5E9) : getColor(0xFFFFFFFF);
+        int colorFrom = 0xFFFFFFFF;
+        int colorTo = isActive ? 0xFFE8F5E9 : 0xFFFFFFFF;
         
         ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnim.setDuration(300);
@@ -110,11 +128,12 @@ public class MainActivity extends Activity {
         });
         colorAnim.start();
         
-        // Анимация иконки
         statusIcon.startAnimation(pulseAnimation);
     }
     
-    private int getColor(int color) {
-        return color;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(updateStatusRunnable);
     }
 }

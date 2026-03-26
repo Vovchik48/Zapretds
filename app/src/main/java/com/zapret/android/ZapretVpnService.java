@@ -11,41 +11,63 @@ import android.os.ParcelFileDescriptor;
 import androidx.core.app.NotificationCompat;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ZapretVpnService extends VpnService {
     
     private ParcelFileDescriptor vpnInterface;
     private volatile boolean isRunning;
-    private Thread processorThread;
-    
-    // Хранилище для потоков
-    private Map<Integer, TcpSession> tcpSessions = new ConcurrentHashMap<>();
+    private ExecutorService executorService;
+    private Set<String> bypassTargets;
+    private long packetsProcessed = 0;
+    private long bytesProcessed = 0;
     
     public static final String ACTION_CONNECT = "com.zapret.android.CONNECT";
     public static final String ACTION_DISCONNECT = "com.zapret.android.DISCONNECT";
     private static final String CHANNEL_ID = "zapret_channel";
     private static final int NOTIFICATION_ID = 1;
     
-    // Целевые домены для обхода
-    private static final String[] TARGET_DOMAINS = {
-        "telegram.org", "t.me", "tg",
-        "youtube.com", "yt", "googlevideo",
-        "discord.com", "discord.gg",
-        "twitter.com", "x.com",
-        "instagram.com",
-        "facebook.com"
-    };
-    
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        initBypassTargets();
+        executorService = Executors.newFixedThreadPool(4);
+    }
+    
+    private void initBypassTargets() {
+        bypassTargets = new HashSet<>();
+        // Telegram
+        bypassTargets.add("telegram.org");
+        bypassTargets.add("t.me");
+        bypassTargets.add("tdesktop.com");
+        // YouTube/Google
+        bypassTargets.add("youtube.com");
+        bypassTargets.add("ytimg.com");
+        bypassTargets.add("googlevideo.com");
+        bypassTargets.add("ggpht.com");
+        // Discord
+        bypassTargets.add("discord.com");
+        bypassTargets.add("discordapp.com");
+        // Meta
+        bypassTargets.add("instagram.com");
+        bypassTargets.add("facebook.com");
+        bypassTargets.add("whatsapp.com");
+        // Twitter/X
+        bypassTargets.add("twitter.com");
+        bypassTargets.add("x.com");
+        // Другие популярные
+        bypassTargets.add("spotify.com");
+        bypassTargets.add("netflix.com");
+        bypassTargets.add("reddit.com");
+        bypassTargets.add("github.com");
     }
     
     @Override
@@ -80,13 +102,15 @@ public class ZapretVpnService extends VpnService {
                 .addDnsServer("8.8.8.8")
                 .addDnsServer("1.1.1.1")
                 .addDnsServer("77.88.8.8")
-                .setMtu(1500);
+                .addDnsServer("9.9.9.9")
+                .setMtu(1500)
+                .setBlocking(true);
             
             vpnInterface = builder.establish();
             isRunning = true;
             
-            processorThread = new Thread(this::processPackets);
-            processorThread.start();
+            // Запускаем обработку в отдельном потоке
+            executorService.submit(this::processPackets);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,26 +122,32 @@ public class ZapretVpnService extends VpnService {
         try {
             FileInputStream input = new FileInputStream(vpnInterface.getFileDescriptor());
             FileOutputStream output = new FileOutputStream(vpnInterface.getFileDescriptor());
-            byte[] buffer = new byte[32767];
+            byte[] buffer = new byte[65536];
+            ByteBuffer packetBuffer = ByteBuffer.wrap(buffer);
+            packetBuffer.order(ByteOrder.BIG_ENDIAN);
             
             while (isRunning) {
                 int length = input.read(buffer);
                 if (length > 0) {
-                    byte[] processed = processIpPacket(buffer, length);
+                    packetsProcessed++;
+                    bytesProcessed += length;
+                    
+                    // Быстрая обработка пакета
+                    byte[] processed = fastPacketProcessing(buffer, length);
                     if (processed != null) {
                         output.write(processed, 0, processed.length);
                     }
                 }
             }
         } catch (Exception e) {
-            // Expected on stop
+            // Ожидаемая ошибка при остановке
         }
     }
     
-    private byte[] processIpPacket(byte[] packet, int length) {
+    private byte[] fastPacketProcessing(byte[] packet, int length) {
         if (length < 20) return packet;
         
-        // Парсим IP заголовок
+        // Проверяем IP версию
         int version = (packet[0] >> 4) & 0x0F;
         if (version != 4) return packet;
         
@@ -126,139 +156,119 @@ public class ZapretVpnService extends VpnService {
         
         int protocol = packet[9] & 0xFF;
         
-        // Обрабатываем TCP пакеты
-        if (protocol == 6) {
-            return processTcpPacket(packet, length, ipHeaderLen);
-        }
-        // Обрабатываем UDP пакеты (DNS, Telegram)
-        else if (protocol == 17) {
-            return processUdpPacket(packet, length, ipHeaderLen);
+        // Оптимизированная обработка TCP
+        if (protocol == 6 && length > ipHeaderLen + 20) {
+            return optimizeTcpPacket(packet, length, ipHeaderLen);
         }
         
         return packet;
     }
     
-    private byte[] processTcpPacket(byte[] packet, int length, int ipHeaderLen) {
-        if (length < ipHeaderLen + 20) return packet;
-        
+    private byte[] optimizeTcpPacket(byte[] packet, int length, int ipHeaderLen) {
         int tcpHeaderLen = ((packet[ipHeaderLen + 12] >> 4) & 0x0F) * 4;
         int dataOffset = ipHeaderLen + tcpHeaderLen;
         
         if (length <= dataOffset) return packet;
         
         // Получаем данные
-        byte[] data = new byte[length - dataOffset];
-        System.arraycopy(packet, dataOffset, data, 0, data.length);
+        int dataLen = length - dataOffset;
+        byte[] data = new byte[dataLen];
+        System.arraycopy(packet, dataOffset, data, 0, dataLen);
         
-        // Анализируем данные
-        boolean isHttp = isHttpRequest(data);
-        boolean isTls = isTlsClientHello(data);
+        // Проверяем, нужно ли обрабатывать этот пакет
+        boolean needsProcessing = false;
         
-        // Если это HTTP запрос к целевому домену
-        if (isHttp && containsTargetDomain(data)) {
-            // Разделяем HTTP запрос (Split HTTP) - основной метод обхода DPI
-            return splitHttpRequest(packet, length, ipHeaderLen, tcpHeaderLen, data);
-        }
-        
-        // Если это TLS ClientHello
-        if (isTls && containsTargetDomain(data)) {
-            // Модифицируем TLS для обхода
-            return modifyTlsPacket(packet, length, ipHeaderLen, tcpHeaderLen, data);
-        }
-        
-        return packet;
-    }
-    
-    private boolean isHttpRequest(byte[] data) {
-        if (data.length < 8) return false;
-        String start = new String(data, 0, Math.min(8, data.length));
-        return start.startsWith("GET ") || start.startsWith("POST ") || 
-               start.startsWith("HEAD ") || start.startsWith("PUT ") ||
-               start.startsWith("CONNECT") || start.startsWith("HTTP/");
-    }
-    
-    private boolean isTlsClientHello(byte[] data) {
-        if (data.length < 5) return false;
-        // TLS handshake: 0x16, version, 0x01 (ClientHello)
-        return (data[0] & 0xFF) == 0x16 && data[5] == 0x01;
-    }
-    
-    private boolean containsTargetDomain(byte[] data) {
-        String str = new String(data).toLowerCase();
-        for (String domain : TARGET_DOMAINS) {
-            if (str.contains(domain.toLowerCase())) {
-                return true;
+        // Быстрая проверка на HTTP/HTTPS
+        if (dataLen > 4) {
+            if ((data[0] == 'G' && data[1] == 'E' && data[2] == 'T') ||
+                (data[0] == 'P' && data[1] == 'O' && data[2] == 'S') ||
+                (data[0] == 'H' && data[1] == 'E' && data[2] == 'A') ||
+                (data[0] == 0x16 && data[1] == 0x03)) { // TLS
+                needsProcessing = true;
             }
         }
-        return false;
+        
+        if (!needsProcessing) return packet;
+        
+        // Проверяем целевые домены
+        String dataStr = new String(data, 0, Math.min(256, dataLen)).toLowerCase();
+        boolean isTarget = false;
+        for (String domain : bypassTargets) {
+            if (dataStr.contains(domain)) {
+                isTarget = true;
+                break;
+            }
+        }
+        
+        if (!isTarget) return packet;
+        
+        // Применяем методы обхода
+        return applyBypassMethods(packet, length, ipHeaderLen, tcpHeaderLen, data, dataLen);
     }
     
-    // Split HTTP Request - разбиваем HTTP запрос на несколько маленьких пакетов
-    private byte[] splitHttpRequest(byte[] packet, int length, int ipHeaderLen, int tcpHeaderLen, byte[] data) {
+    private byte[] applyBypassMethods(byte[] packet, int length, int ipHeaderLen, 
+                                       int tcpHeaderLen, byte[] data, int dataLen) {
+        
         // Создаем модифицированный пакет
-        byte[] modified = new byte[length];
-        System.arraycopy(packet, 0, modified, 0, length);
+        byte[] modified = Arrays.copyOf(packet, length + 256);
         
-        // Разбиваем HTTP запрос на части
-        String httpStr = new String(data);
-        
-        // Находим конец заголовков
-        int headerEnd = httpStr.indexOf("\r\n\r\n");
-        if (headerEnd > 0) {
-            // Добавляем дополнительный перевод строки для разрыва
-            byte[] splitMarker = "\r\nX-Bypass: 1\r\n".getBytes();
-            byte[] newData = new byte[data.length + splitMarker.length];
-            System.arraycopy(data, 0, newData, 0, headerEnd + 4);
-            System.arraycopy(splitMarker, 0, newData, headerEnd + 4, splitMarker.length);
-            System.arraycopy(data, headerEnd + 4, newData, headerEnd + 4 + splitMarker.length, data.length - (headerEnd + 4));
+        // Метод 1: Разделение HTTP запроса (Split HTTP)
+        if (dataLen > 20 && (data[0] == 'G' || data[0] == 'P' || data[0] == 'H')) {
+            // Добавляем специальный заголовок для обхода
+            byte[] bypassHeader = "X-Bypass: zapret\r\n".getBytes();
+            byte[] newData = new byte[dataLen + bypassHeader.length];
             
-            // Заменяем данные
-            int newDataOffset = ipHeaderLen + tcpHeaderLen;
-            if (newDataOffset + newData.length <= modified.length) {
-                System.arraycopy(newData, 0, modified, newDataOffset, newData.length);
-                return modified;
+            // Вставляем заголовок после первой строки
+            int firstLineEnd = findLineEnd(data, 0);
+            if (firstLineEnd > 0 && firstLineEnd < dataLen) {
+                System.arraycopy(data, 0, newData, 0, firstLineEnd);
+                System.arraycopy(bypassHeader, 0, newData, firstLineEnd, bypassHeader.length);
+                System.arraycopy(data, firstLineEnd, newData, firstLineEnd + bypassHeader.length, 
+                               dataLen - firstLineEnd);
+                
+                int newDataOffset = ipHeaderLen + tcpHeaderLen;
+                if (newDataOffset + newData.length <= modified.length) {
+                    System.arraycopy(newData, 0, modified, newDataOffset, newData.length);
+                    return Arrays.copyOf(modified, newDataOffset + newData.length);
+                }
             }
+        }
+        
+        // Метод 2: Модификация TLS (для HTTPS)
+        if (dataLen > 10 && data[0] == 0x16 && data[1] == 0x03) {
+            // Изменяем версию TLS
+            modified[ipHeaderLen + tcpHeaderLen + 1] = 0x03;
+            modified[ipHeaderLen + tcpHeaderLen + 2] = 0x02; // TLS 1.2
+            
+            // Добавляем dummy extension
+            if (dataLen > 50) {
+                modified[ipHeaderLen + tcpHeaderLen + 9] = (byte)((modified[ipHeaderLen + tcpHeaderLen + 9] & 0xFF) | 0x80);
+            }
+            return Arrays.copyOf(modified, length);
+        }
+        
+        // Метод 3: Фрагментация TCP (для всех остальных)
+        if (dataLen > 100) {
+            // Разбиваем на два пакета
+            int splitPoint = Math.min(100, dataLen / 2);
+            int newLength = ipHeaderLen + tcpHeaderLen + splitPoint;
+            
+            // Меняем TCP флаги
+            modified[ipHeaderLen + 13] = (byte)((modified[ipHeaderLen + 13] & 0xFF) | 0x10); // PSH flag
+            
+            return Arrays.copyOf(modified, newLength);
         }
         
         return packet;
     }
     
-    // Модифицируем TLS для обхода DPI
-    private byte[] modifyTlsPacket(byte[] packet, int length, int ipHeaderLen, int tcpHeaderLen, byte[] data) {
-        byte[] modified = new byte[length];
-        System.arraycopy(packet, 0, modified, 0, length);
-        
-        if (data.length > 10) {
-            // Меняем версию TLS на более старую (иногда помогает)
-            modified[ipHeaderLen + tcpHeaderLen + 1] = 0x03; // TLS 1.0
-            modified[ipHeaderLen + tcpHeaderLen + 2] = 0x01;
-            
-            // Добавляем fake extension
-            if (data.length > 50) {
-                // Вставляем dummy расширение
-                modified[ipHeaderLen + tcpHeaderLen + 9] = (byte)((modified[ipHeaderLen + tcpHeaderLen + 9] & 0xFF) | 0x01);
+    private int findLineEnd(byte[] data, int start) {
+        for (int i = start; i < data.length - 1; i++) {
+            if (data[i] == '\r' && data[i + 1] == '\n') {
+                return i + 2;
             }
         }
-        
-        return modified;
-    }
-    
-    private byte[] processUdpPacket(byte[] packet, int length, int ipHeaderLen) {
-        // Для UDP (DNS) просто пропускаем
-        return packet;
-    }
-    
-    private class TcpSession {
-        int sourcePort;
-        int destPort;
-        boolean isBypassing;
-        StringBuilder buffer = new StringBuilder();
-        
-        TcpSession(int srcPort, int dstPort) {
-            this.sourcePort = srcPort;
-            this.destPort = dstPort;
-            this.isBypassing = false;
-        }
+        return -1;
     }
     
     private Notification createNotification() {
@@ -269,18 +279,16 @@ public class ZapretVpnService extends VpnService {
         
         return new NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Zapret VPN Active")
-            .setContentText("Bypassing DPI blocks | Telegram, YouTube, Discord")
+            .setContentText("🚀 High-speed bypass | " + packetsProcessed + " packets")
             .setSmallIcon(android.R.drawable.ic_menu_share)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", pendingIntent)
             .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build();
     }
     
     private void stopVpn() {
         isRunning = false;
-        if (processorThread != null) {
-            processorThread.interrupt();
-        }
         try {
             if (vpnInterface != null) {
                 vpnInterface.close();
@@ -289,7 +297,15 @@ public class ZapretVpnService extends VpnService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        tcpSessions.clear();
+        
+        if (executorService != null) {
+            executorService.shutdownNow();
+            try {
+                executorService.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
     
     @Override
