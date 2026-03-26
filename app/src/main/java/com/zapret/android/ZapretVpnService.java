@@ -11,6 +11,8 @@ import android.os.ParcelFileDescriptor;
 import androidx.core.app.NotificationCompat;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class ZapretVpnService extends VpnService {
     
@@ -59,6 +61,7 @@ public class ZapretVpnService extends VpnService {
                 .addRoute("0.0.0.0", 0)
                 .addDnsServer("8.8.8.8")
                 .addDnsServer("1.1.1.1")
+                .addDnsServer("77.88.8.8")
                 .setMtu(1500);
             
             vpnInterface = builder.establish();
@@ -81,12 +84,36 @@ public class ZapretVpnService extends VpnService {
             while (isRunning) {
                 int length = input.read(buffer);
                 if (length > 0) {
-                    output.write(buffer, 0, length);
+                    // Простая модификация пакетов для обхода DPI
+                    byte[] modified = modifyPacket(buffer, length);
+                    output.write(modified, 0, modified.length);
                 }
             }
         } catch (Exception e) {
             // Expected on stop
         }
+    }
+    
+    private byte[] modifyPacket(byte[] packet, int length) {
+        // Копируем оригинальный пакет
+        byte[] modified = new byte[length];
+        System.arraycopy(packet, 0, modified, 0, length);
+        
+        // Простая модификация для обхода DPI:
+        // Если это TCP пакет, немного изменяем флаги
+        if (length > 20) {
+            int protocol = packet[9] & 0xFF;
+            if (protocol == 6) { // TCP
+                // Модифицируем TCP флаги
+                int flagsOffset = 13;
+                if (flagsOffset < length) {
+                    // Добавляем случайный флаг для обхода
+                    modified[flagsOffset] = (byte)((modified[flagsOffset] & 0xFF) | 0x01);
+                }
+            }
+        }
+        
+        return modified;
     }
     
     private Notification createNotification() {
@@ -97,7 +124,7 @@ public class ZapretVpnService extends VpnService {
         
         return new NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Zapret VPN Active")
-            .setContentText("VPN running")
+            .setContentText("Bypassing DPI blocks")
             .setSmallIcon(android.R.drawable.ic_menu_share)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", pendingIntent)
             .build();
