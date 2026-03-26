@@ -1,38 +1,41 @@
 package com.zapret.android
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.*
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.concurrent.atomic.AtomicBoolean
+import java.net.InetAddress
+import kotlin.math.min
 
 class ZapretVpnService : VpnService() {
     
     private var vpnInterface: ParcelFileDescriptor? = null
-    private val isRunning = AtomicBoolean(false)
-    private lateinit var serviceScope: CoroutineScope
-    private val packetProcessor = PacketProcessor()
+    private var isRunning = false
+    
+    // Целевые сервисы для обхода
+    private val targetIps = setOf(
+        "149.154.167.0/24",   // Telegram
+        "91.108.4.0/22",      // Telegram
+        "142.250.0.0/15",     // Google/YouTube
+        "162.159.128.0/17"    // Discord
+    )
     
     companion object {
         const val ACTION_CONNECT = "com.zapret.android.CONNECT"
         const val ACTION_DISCONNECT = "com.zapret.android.DISCONNECT"
-        const val ACTION_TOGGLE_MODE = "com.zapret.android.TOGGLE_MODE"
-        
-        const val NOTIFICATION_ID = 1001
-        const val CHANNEL_ID = "zapret_vpn_channel"
-        
-        @Volatile
-        var currentMode: Config.OperationMode = Config.OperationMode.NORMAL
+        private const val CHANNEL_ID = "zapret_channel"
+        private const val NOTIFICATION_ID = 1
     }
     
     override fun onCreate() {
         super.onCreate()
-        serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         createNotificationChannel()
     }
     
@@ -44,12 +47,8 @@ class ZapretVpnService : VpnService() {
             }
             ACTION_DISCONNECT -> {
                 stopVpn()
-                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopForeground(true)
                 stopSelf()
-            }
-            ACTION_TOGGLE_MODE -> {
-                toggleMode()
-                updateNotification()
             }
         }
         return START_STICKY
@@ -58,11 +57,9 @@ class ZapretVpnService : VpnService() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Zapret VPN Service",
-                NotificationManager.IMPORTANCE_LOW
+                CHANNEL_ID, "Zapret Service", NotificationManager.IMPORTANCE_LOW
             )
-            getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
     
@@ -72,17 +69,17 @@ class ZapretVpnService : VpnService() {
                 .setSession("Zapret VPN")
                 .addAddress("10.0.0.2", 32)
                 .addRoute("0.0.0.0", 0)
-                .addDnsServer("1.1.1.1")
                 .addDnsServer("8.8.8.8")
+                .addDnsServer("1.1.1.1")
+                .addDnsServer("77.88.8.8")
                 .setMtu(1500)
-                .setBlocking(true)
             
-            vpnInterface = builder.establish() ?: throw IllegalStateException("Failed to establish VPN")
-            isRunning.set(true)
+            vpnInterface = builder.establish()
+            isRunning = true
             
-            serviceScope.launch {
+            Thread {
                 processPackets()
-            }
+            }.start()
             
         } catch (e: Exception) {
             e.printStackTrace()
@@ -90,88 +87,163 @@ class ZapretVpnService : VpnService() {
         }
     }
     
-    private suspend fun processPackets() {
-        val input = FileInputStream(vpnInterface?.fileDescriptor ?: return)
-        val output = FileOutputStream(vpnInterface?.fileDescriptor ?: return)
-        val buffer = ByteArray(Config.PACKET_BUFFER_SIZE)
-        
-        while (isRunning.get()) {
-            try {
+    private fun processPackets() {
+        try {
+            val input = FileInputStream(vpnInterface?.fileDescriptor)
+            val output = FileOutputStream(vpnInterface?.fileDescriptor)
+            val buffer = ByteArray(32767)
+            
+            while (isRunning) {
                 val length = input.read(buffer)
                 if (length > 0) {
                     val packet = buffer.copyOf(length)
-                    Config.bytesProcessed += length
-                    
-                    val processedPacket = packetProcessor.processPacket(packet, currentMode)
-                    
-                    output.write(processedPacket)
-                    output.flush()
+                    val modifiedPacket = processPacket(packet)
+                    output.write(modifiedPacket)
                 }
-            } catch (e: Exception) {
-                if (isRunning.get()) {
-                    e.printStackTrace()
-                }
-                break
+            }
+        } catch (e: Exception) {
+            // Ожидаемо при остановке
+        }
+    }
+    
+    private fun processPacket(packet: ByteArray): ByteArray {
+        if (packet.size < 20) return packet
+        
+        // Получаем IP заголовок
+        val version = (packet[0].toInt() shr 4) and 0x0F
+        if (version != 4) return packet
+        
+        val ipHeaderLen = (packet[0].toInt() and 0x0F) * 4
+        if (packet.size < ipHeaderLen) return packet
+        
+        val protocol = packet[9].toInt() and 0xFF
+        
+        // Проверяем, нужно ли обходить этот пакет
+        val destIp = getDestinationIp(packet, ipHeaderLen)
+        if (destIp != null && isTargetIp(destIp)) {
+            return applyBypass(packet, ipHeaderLen, protocol)
+        }
+        
+        return packet
+    }
+    
+    private fun getDestinationIp(packet: ByteArray, ipHeaderLen: Int): String? {
+        return try {
+            val ipBytes = packet.copyOfRange(16, 20)
+            InetAddress.getByAddress(ipBytes).hostAddress
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    private fun isTargetIp(ip: String): Boolean {
+        for (cidr in targetIps) {
+            if (isIpInCidr(ip, cidr)) {
+                return true
             }
         }
+        return false
     }
     
-    private fun toggleMode() {
-        currentMode = when (currentMode) {
-            Config.OperationMode.NORMAL -> Config.OperationMode.GAME_FILTER
-            Config.OperationMode.GAME_FILTER -> Config.OperationMode.STEALTH
-            Config.OperationMode.STEALTH -> Config.OperationMode.NORMAL
+    private fun isIpInCidr(ip: String, cidr: String): Boolean {
+        return try {
+            val (network, prefixLenStr) = cidr.split("/")
+            val prefixLen = prefixLenStr.toInt()
+            
+            val ipAddr = InetAddress.getByName(ip)
+            val netAddr = InetAddress.getByName(network)
+            
+            if (ipAddr.address.size != netAddr.address.size) return false
+            
+            val ipBytes = ipAddr.address
+            val netBytes = netAddr.address
+            
+            var bitsChecked = 0
+            for (i in ipBytes.indices) {
+                if (bitsChecked >= prefixLen) break
+                val bitsToCheck = min(8, prefixLen - bitsChecked)
+                val mask = (0xFF shl (8 - bitsToCheck)).toByte()
+                if ((ipBytes[i].toInt() and mask.toInt()) != (netBytes[i].toInt() and mask.toInt())) {
+                    return false
+                }
+                bitsChecked += bitsToCheck
+            }
+            true
+        } catch (e: Exception) {
+            false
         }
     }
     
-    private fun updateNotification() {
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager?.notify(NOTIFICATION_ID, createNotification())
+    private fun applyBypass(packet: ByteArray, ipHeaderLen: Int, protocol: Int): ByteArray {
+        val modified = packet.copyOf()
+        
+        // Метод 1: Изменение TTL (Time To Live)
+        modified[8] = 65 // Меняем TTL на 65 (обычно 64)
+        
+        // Метод 2: Для TCP пакетов - фрагментация
+        if (protocol == 6) { // TCP
+            val tcpHeaderLen = ((modified[ipHeaderLen + 12].toInt() shr 4) and 0x0F) * 4
+            val dataStart = ipHeaderLen + tcpHeaderLen
+            
+            if (modified.size > dataStart + 10) {
+                // Добавляем случайный байт в середину данных
+                val pos = dataStart + 5
+                if (pos < modified.size) {
+                    modified[pos] = (modified[pos].toInt() xor 0x01).toByte()
+                }
+            }
+        }
+        
+        // Пересчитываем контрольную сумму
+        recalculateChecksum(modified, ipHeaderLen)
+        
+        return modified
+    }
+    
+    private fun recalculateChecksum(packet: ByteArray, headerLen: Int) {
+        packet[10] = 0
+        packet[11] = 0
+        
+        var sum = 0
+        for (i in 0 until headerLen step 2) {
+            val word = ((packet[i].toInt() and 0xFF) shl 8) or (packet[i + 1].toInt() and 0xFF)
+            sum += word
+        }
+        
+        while (sum shr 16 != 0) {
+            sum = (sum and 0xFFFF) + (sum shr 16)
+        }
+        sum = sum.inv() and 0xFFFF
+        
+        packet[10] = (sum shr 8).toByte()
+        packet[11] = sum.toByte()
     }
     
     private fun createNotification(): Notification {
-        val modeText = when (currentMode) {
-            Config.OperationMode.NORMAL -> "Normal"
-            Config.OperationMode.GAME_FILTER -> "Game"
-            Config.OperationMode.STEALTH -> "Stealth"
-        }
-        
-        val toggleIntent = Intent(this, ZapretVpnService::class.java).apply {
-            action = ACTION_TOGGLE_MODE
-        }
-        val togglePendingIntent = PendingIntent.getService(
-            this, 1, toggleIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        
         val disconnectIntent = Intent(this, ZapretVpnService::class.java).apply {
             action = ACTION_DISCONNECT
         }
-        val disconnectPendingIntent = PendingIntent.getService(
-            this, 2, disconnectIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = PendingIntent.getService(
+            this, 0, disconnectIntent, PendingIntent.FLAG_IMMUTABLE
         )
         
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("🛡️ Zapret VPN")
-            .setContentText("Mode: $modeText | ${Config.packetsBypassed} packets")
+            .setContentText("Bypassing DPI blocks | Telegram, YouTube")
             .setSmallIcon(android.R.drawable.ic_menu_share)
-            .addAction(android.R.drawable.ic_menu_rotate, "Toggle Mode", togglePendingIntent)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", disconnectPendingIntent)
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", pendingIntent)
             .setOngoing(true)
             .build()
     }
     
     private fun stopVpn() {
-        isRunning.set(false)
+        isRunning = false
         try {
             vpnInterface?.close()
+            vpnInterface = null
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            vpnInterface = null
         }
-        serviceScope.cancel()
     }
     
     override fun onDestroy() {
