@@ -112,13 +112,13 @@
   <meta name="route-pattern" content="/:user_id/:repository/raw/*name(/*path)" data-turbo-transient>
   <meta name="route-controller" content="blob" data-turbo-transient>
   <meta name="route-action" content="raw" data-turbo-transient>
-  <meta name="fetch-nonce" content="v2:73babfb1-a633-08bb-2fd0-901beab1a962">
+  <meta name="fetch-nonce" content="v2:eb2bd28a-8f5e-79bf-fa39-c0de2951f870">
 
     
   <meta name="current-catalog-service-hash" content="f3abb0cc802f3d7b95fc8762b94bdcb13bf39634c40c357301c4aa1d67a256fb">
 
 
-  <meta name="request-id" content="BD40:F9648:9C7D77F:6BF29AE:69C5261F" data-turbo-transient="true" /><meta name="html-safe-nonce" content="044df74916513354c03fbeb20d740abc65368b9a3f8872bfd748810f238b56af" data-turbo-transient="true" /><meta name="visitor-payload" content="eyJyZWZlcnJlciI6bnVsbCwicmVxdWVzdF9pZCI6IkJENDA6Rjk2NDg6OUM3RDc3Rjo2QkYyOUFFOjY5QzUyNjFGIiwidmlzaXRvcl9pZCI6IjcwNTE4ODM4MzU1OTE4MjkwMjMiLCJyZWdpb25fZWRnZSI6ImZyYSIsInJlZ2lvbl9yZW5kZXIiOiJpYWQifQ==" data-turbo-transient="true" /><meta name="visitor-hmac" content="4437e998d121b3e500e8415014d2209bb74925145ec58ccc271036ea438bacfa" data-turbo-transient="true" />
+  <meta name="request-id" content="A346:18FF5D:A3B0477:70E4665:69C52710" data-turbo-transient="true" /><meta name="html-safe-nonce" content="302810e6ecd50e2504dc2d1b829336d2b67cdd582aa3537739306d8a0f49fb09" data-turbo-transient="true" /><meta name="visitor-payload" content="eyJyZWZlcnJlciI6bnVsbCwicmVxdWVzdF9pZCI6IkEzNDY6MThGRjVEOkEzQjA0Nzc6NzBFNDY2NTo2OUM1MjcxMCIsInZpc2l0b3JfaWQiOiI4NzI0NzM3MzAwNjE1MjEwNzY4IiwicmVnaW9uX2VkZ2UiOiJmcmEiLCJyZWdpb25fcmVuZGVyIjoiaWFkIn0=" data-turbo-transient="true" /><meta name="visitor-hmac" content="dc24b402dfd14a132a9b8618bae337cea7afde6ed0b2f0e9fceb617a19df57ff" data-turbo-transient="true" />
 
 
     <meta name="hovercard-subject-tag" content="repository:302322" data-turbo-transient>
@@ -127,7 +127,7 @@
   <meta name="github-keyboard-shortcuts" content="copilot" data-turbo-transient="true" />
   
 
-  <meta name="selected-link" value="/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar" data-turbo-transient>
+  <meta name="selected-link" value="/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar" data-turbo-transient>
   <link rel="assets" href="https://github.githubassets.com/">
 
     <meta name="google-site-verification" content="Apib7-x98H0j5cPqHWwSMm6dNU4GmODRoqxLiDzdx9I">
@@ -159,7 +159,7 @@
 
     <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
     <meta property="fb:app_id" content="1401488693436528">
-    <meta name="apple-itunes-app" content="app-id=1477376905, app-argument=https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar" />
+    <meta name="apple-itunes-app" content="app-id=1477376905, app-argument=https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar" />
 
       <meta property="og:url" content="https://github.com">
   <meta property="og:site_name" content="GitHub">
@@ -214,7 +214,7 @@
 
 
 
-      <link rel="canonical" href="https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar" data-turbo-transient>
+      <link rel="canonical" href="https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar" data-turbo-transient>
 
 
     <meta name="turbo-body-classes" content="logged-out env-production page-responsive min-height-full d-flex flex-column">
@@ -316,19 +316,19 @@
 
       <div class="d-flex flex-1 flex-order-2 text-right d-lg-none gap-2 flex-justify-end">
           <a
-            href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv8.0%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar"
+            href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv7.5%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar"
             class="HeaderMenu-link HeaderMenu-button d-inline-flex f5 no-underline border color-border-default rounded-2 px-2 py-1 color-fg-inherit js-prevent-focus-on-mobile-nav"
-            data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="b56dbdfa0935d3fa75464b5c525d05227a81f2863e709e6e8910df50371f4e95"
+            data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="127a59d3ee4d1dc57dfbff2fd1cb31595bed6f1397c53f41773105fc3fc19e52"
             data-analytics-event="{&quot;category&quot;:&quot;Marketing nav&quot;,&quot;action&quot;:&quot;click to Sign in&quot;,&quot;label&quot;:&quot;ref_page:Marketing;ref_cta:Sign in;ref_loc:Header&quot;}"
           >
             Sign in
           </a>
               <div class="AppHeader-appearanceSettings">
     <react-partial-anchor>
-      <button data-target="react-partial-anchor.anchor" id="icon-button-f53dcff5-d2f1-42dc-9957-b81341ae6bd5" aria-labelledby="tooltip-90081f11-e870-4d09-8f98-6a1d61ceb6a9" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
+      <button data-target="react-partial-anchor.anchor" id="icon-button-47a7a4cd-8ce7-4996-8b91-eabc091f872b" aria-labelledby="tooltip-4a1d6752-001d-4a19-aeea-2dc596e9d697" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
     <path d="M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"></path>
 </svg>
-</button><tool-tip id="tooltip-90081f11-e870-4d09-8f98-6a1d61ceb6a9" for="icon-button-f53dcff5-d2f1-42dc-9957-b81341ae6bd5" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
+</button><tool-tip id="tooltip-4a1d6752-001d-4a19-aeea-2dc596e9d697" for="icon-button-47a7a4cd-8ce7-4996-8b91-eabc091f872b" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
 
       <template data-target="react-partial-anchor.template">
         <link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-react-css.ac4545cf9f4963ee.module.css" />
@@ -376,7 +376,7 @@
                 
 
 
-<qbsearch-input class="search-input" data-scope="" data-custom-scopes-path="/search/custom_scopes" data-delete-custom-scopes-csrf="6GrK1FJ8URGrxCqHO3ssmvWVS0zUMpY2P-C7PFzxTHuiURlbWO8GSM2UrNcF9cey57DYSRHqvjmcwQ1RVQaaAg" data-max-custom-scopes="10" data-header-redesign-enabled="false" data-initial-value="" data-blackbird-suggestions-path="/search/suggestions" data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations" data-current-repository="" data-current-org="" data-current-owner="" data-logged-in="false" data-copilot-chat-enabled="false" data-nl-search-enabled="false" data-retain-scroll-position="true">
+<qbsearch-input class="search-input" data-scope="" data-custom-scopes-path="/search/custom_scopes" data-delete-custom-scopes-csrf="4YF6nkoGMR82EQ-JIGZEcO1fXUo2mvhkSIwYDv-zyiG0XPBZen8h3Bwt16Z5Bv7N3fpYZEgMjJmNjO4J25aZYA" data-max-custom-scopes="10" data-header-redesign-enabled="false" data-initial-value="" data-blackbird-suggestions-path="/search/suggestions" data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations" data-current-repository="" data-current-org="" data-current-owner="" data-logged-in="false" data-copilot-chat-enabled="false" data-nl-search-enabled="false" data-retain-scroll-position="true">
   <div
     class="search-input-container search-with-dialog position-relative d-flex flex-row flex-items-center tmp-mr-4 rounded"
     data-action="click:qbsearch-input#searchInputContainerClicked"
@@ -440,7 +440,7 @@
           ></div>
           <div class="QueryBuilder-InputWrapper">
             <div aria-hidden="true" class="QueryBuilder-Sizer" data-target="query-builder.sizer"></div>
-            <input id="query-builder-test" name="query-builder-test" value="" autocomplete="off" type="text" role="combobox" spellcheck="false" aria-expanded="false" aria-describedby="validation-3dd0ed87-d782-495f-bf79-01a53fd12bf1" data-target="query-builder.input" data-action="
+            <input id="query-builder-test" name="query-builder-test" value="" autocomplete="off" type="text" role="combobox" spellcheck="false" aria-expanded="false" aria-describedby="validation-a366edab-ca1f-4ee2-bd2f-1ae5970d94bf" data-target="query-builder.input" data-action="
           input:query-builder#inputChange
           blur:query-builder#inputBlur
           keydown:query-builder#inputKeydown
@@ -681,7 +681,7 @@
             ></ul>
 
         </div>
-      <div class="FormControl-inlineValidation" id="validation-3dd0ed87-d782-495f-bf79-01a53fd12bf1" hidden="hidden">
+      <div class="FormControl-inlineValidation" id="validation-a366edab-ca1f-4ee2-bd2f-1ae5970d94bf" hidden="hidden">
         <span class="FormControl-inlineValidation--visual">
           <svg aria-hidden="true" height="12" viewBox="0 0 12 12" version="1.1" width="12" data-view-component="true" class="octicon octicon-alert-fill">
     <path d="M4.855.708c.5-.896 1.79-.896 2.29 0l4.675 8.351a1.312 1.312 0 0 1-1.146 1.954H1.33A1.313 1.313 0 0 1 .183 9.058ZM7 7V3H5v4Zm-1 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"></path>
@@ -722,7 +722,7 @@
   
 </div>
       <scrollable-region data-labelled-by="feedback-dialog-title">
-        <div data-view-component="true" class="Overlay-body">        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="code-search-feedback-form" data-turbo="false" action="/search/feedback" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="ao05H3tFLaZOb0XfEVMpUvoW18tgYHrlSNru5HRfpNpfEtqLagUWbOftIRsDkCEFk0MDkEMdDde2PfrO9r_48A" />
+        <div data-view-component="true" class="Overlay-body">        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="code-search-feedback-form" data-turbo="false" action="/search/feedback" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="mAdQUUSif54wC1FOxFn4IffodFiFcEOVKm4ZuwF3G5Ew0pbYISM7fNf4SEfujLCme2z9kPKkjapES7UiJdAQAg" />
           <p>We read every piece of feedback, and take your input very seriously.</p>
           <textarea name="feedback" class="form-control width-full mb-2" style="height: 120px" id="feedback"></textarea>
           <input name="include_email" id="include_email" aria-label="Include my email address so I can be contacted" class="form-control mr-2" type="checkbox">
@@ -760,7 +760,7 @@
         <div data-view-component="true" class="Overlay-body">        <div data-target="custom-scopes.customScopesModalDialogFlash"></div>
 
         <div hidden class="create-custom-scope-form" data-target="custom-scopes.createCustomScopeForm">
-        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="custom-scopes-dialog-form" data-turbo="false" action="/search/custom_scopes" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="WftfrIrl-ZHR754IOHAdLYRkVfzU0Vgw5pvUNdHMq-Bjjcqdruzv7tMtFCRIlU81eQMoVyPuQEOtFasdfJn03A" />
+        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="custom-scopes-dialog-form" data-turbo="false" action="/search/custom_scopes" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="jVyF0cz6KHjqGlCgbaLk7dQIyAtUDDOk1lU4hjeTLOhnVnWlFNtIzBQlqUr39vgUfbBaH7nk38gVNK4at_cgAg" />
           <div data-target="custom-scopes.customScopesModalDialogFlash"></div>
 
           <input type="hidden" id="custom_scope_id" name="custom_scope_id" data-target="custom-scopes.customScopesIdField">
@@ -778,7 +778,7 @@
                 placeholder="github-ruby"
                 required
                 maxlength="50">
-              <input type="hidden" value="6xjDCVae4PYqR9c1_pbtJH1JGbOc4gGWBRYA8Kx3Tj5foBAoHxlfxG2Kj44V91iP_3ve8-baidTXfAYvBNoQOA" data-csrf="true" />
+              <input type="hidden" value="GrSVCPXefo8nXbZQ7yf8yMdIodIfekg7uvRAP_DS9FfwG8AAqA6-q9-V4IKMAayxxvP2MS-yilaVi0rybSbm_A" data-csrf="true" />
             </auto-check>
           </div>
 
@@ -820,10 +820,10 @@
 
             <div class="position-relative HeaderMenu-link-wrap d-lg-inline-block">
               <a
-                href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv8.0%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar"
+                href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv7.5%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar"
                 class="HeaderMenu-link HeaderMenu-link--sign-in HeaderMenu-button flex-shrink-0 no-underline d-none d-lg-inline-flex border border-lg-0 rounded px-2 py-1"
                 style="margin-left: 12px;"
-                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="b56dbdfa0935d3fa75464b5c525d05227a81f2863e709e6e8910df50371f4e95"
+                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="127a59d3ee4d1dc57dfbff2fd1cb31595bed6f1397c53f41773105fc3fc19e52"
                 data-analytics-event="{&quot;category&quot;:&quot;Marketing nav&quot;,&quot;action&quot;:&quot;click to go to homepage&quot;,&quot;label&quot;:&quot;ref_page:Marketing;ref_cta:Sign in;ref_loc:Header&quot;}"
               >
                 Sign in
@@ -833,7 +833,7 @@
     <h4 data-view-component="true" class="color-fg-default mb-2">                    Sign in to GitHub
 </h4>
                         
-<!-- '"` --><!-- </textarea></xmp> --></option></form><form data-turbo="false" action="/session" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="WYI5w0QlZE4SCnyFt5tqrHNYiL6l7lTbV-Xa9Nz6_56DGLUX-wVGNj-OWG9i2so8y-OV85LQjg8iFDM7-aE8kg" />  <input type="hidden" name="add_account" id="add_account" autocomplete="off" class="form-control" />
+<!-- '"` --><!-- </textarea></xmp> --></option></form><form data-turbo="false" action="/session" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="Nn3l3WudZsLsZM2TjUO-9Tc0JYgrkJctapEf2ZvF7wlWBVcOGnl8Ua1B6Ie9eJyeOer89Lj6spkd537e7mo4hQ" />  <input type="hidden" name="add_account" id="add_account" autocomplete="off" class="form-control" />
 
     <label for="login_field">
       Username or email address
@@ -851,17 +851,17 @@
 <input type="hidden" class="js-support" name="javascript-support" value="unknown">
 <input type="hidden" class="js-webauthn-support" name="webauthn-support" value="unknown">
 <input type="hidden" class="js-webauthn-iuvpaa-support" name="webauthn-iuvpaa-support" value="unknown">
-<input type="hidden" name="return_to" id="return_to" value="https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar" autocomplete="off" class="form-control" />
+<input type="hidden" name="return_to" id="return_to" value="https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar" autocomplete="off" class="form-control" />
 <input type="hidden" name="allow_signup" id="allow_signup" autocomplete="off" class="form-control" />
 <input type="hidden" name="client_id" id="client_id" autocomplete="off" class="form-control" />
 <input type="hidden" name="integration" id="integration" autocomplete="off" class="form-control" />
-<input type="text" name="required_field_1458" hidden="hidden" class="form-control" /><input type="hidden" name="timestamp" value="1774528031507" autocomplete="off" class="form-control" /><input type="hidden" name="timestamp_secret" value="1ca94d6dcdfdecb9c8e923e2e4ab4394d2cebce340858582751b12b8fcf8cb88" autocomplete="off" class="form-control" />
+<input type="text" name="required_field_1704" hidden="hidden" class="form-control" /><input type="hidden" name="timestamp" value="1774528272703" autocomplete="off" class="form-control" /><input type="hidden" name="timestamp_secret" value="f724962e25b2c90a227a1c42ddd855a8a97b2734006ba890f5e5660e33d7fc4b" autocomplete="off" class="form-control" />
 
     <input type="submit" name="commit" value="Sign in" class="btn btn-primary btn-block js-sign-in-button" data-disable-with="Signing in…" data-signin-label="Sign in" data-sso-label="Sign in with your identity provider" development="false" disable-emu-sso="false" />
   </div>
 </form>  <webauthn-status class="js-webauthn-login-emu-control">
         <div data-target="webauthn-status.partial" class="d-flex flex-justify-between flex-column tmp-mt-3 mb-0" hidden>
-          <a href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv8.0%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar" data-analytics-event="{&quot;category&quot;:&quot;passkey_404_login&quot;,&quot;action&quot;:&quot;clicked&quot;,&quot;label&quot;:null}" data-view-component="true" class="Button--link Button--medium Button">  <span class="Button-content">
+          <a href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgradle%2Fgradle%2Fraw%2Fv7.5%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar" data-analytics-event="{&quot;category&quot;:&quot;passkey_404_login&quot;,&quot;action&quot;:&quot;clicked&quot;,&quot;label&quot;:null}" data-view-component="true" class="Button--link Button--medium Button">  <span class="Button-content">
     <span class="Button-label">or continue with other methods</span>
   </span>
 </a>
@@ -871,20 +871,20 @@
 
 </div></div>            </div>
 
-              <a href="/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fgradle%2Fgradle%2Fraw%2Fv8.0%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar&amp;source=header"
+              <a href="/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fgradle%2Fgradle%2Fraw%2Fv7.5%2Fgradle%2Fwrapper%2Fgradle-wrapper.jar&amp;source=header"
                 class="HeaderMenu-link HeaderMenu-link--sign-up HeaderMenu-button flex-shrink-0 d-flex d-lg-inline-flex no-underline border color-border-default rounded px-2 py-1"
-                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="b56dbdfa0935d3fa75464b5c525d05227a81f2863e709e6e8910df50371f4e95"
-                data-analytics-event="{&quot;category&quot;:&quot;Sign up&quot;,&quot;action&quot;:&quot;click to sign up for account&quot;,&quot;label&quot;:&quot;ref_page:/gradle/gradle/raw/v8.0/gradle/wrapper/gradle-wrapper.jar;ref_cta:Sign up;ref_loc:header logged out&quot;}"
+                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="127a59d3ee4d1dc57dfbff2fd1cb31595bed6f1397c53f41773105fc3fc19e52"
+                data-analytics-event="{&quot;category&quot;:&quot;Sign up&quot;,&quot;action&quot;:&quot;click to sign up for account&quot;,&quot;label&quot;:&quot;ref_page:/gradle/gradle/raw/v7.5/gradle/wrapper/gradle-wrapper.jar;ref_cta:Sign up;ref_loc:header logged out&quot;}"
               >
                 Sign up
               </a>
 
                 <div class="AppHeader-appearanceSettings">
     <react-partial-anchor>
-      <button data-target="react-partial-anchor.anchor" id="icon-button-6a4a4e7b-9ef4-4f79-8df4-59651f80ff4f" aria-labelledby="tooltip-3bf1b5be-445f-4a1b-848b-5537a329db2f" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
+      <button data-target="react-partial-anchor.anchor" id="icon-button-5a71b611-a8e7-4bd5-b54e-8cc975ab32c2" aria-labelledby="tooltip-239837a2-2bb9-421a-a085-6d4ba03c9429" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
     <path d="M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"></path>
 </svg>
-</button><tool-tip id="tooltip-3bf1b5be-445f-4a1b-848b-5537a329db2f" for="icon-button-6a4a4e7b-9ef4-4f79-8df4-59651f80ff4f" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
+</button><tool-tip id="tooltip-239837a2-2bb9-421a-a085-6d4ba03c9429" for="icon-button-5a71b611-a8e7-4bd5-b54e-8cc975ab32c2" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
 
       <template data-target="react-partial-anchor.template">
         <link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-react-css.ac4545cf9f4963ee.module.css" />
@@ -922,10 +922,10 @@
         <span class="js-stale-session-flash-signed-out" hidden>You signed out in another tab or window. <a class="Link--inTextBlock" href="">Reload</a> to refresh your session.</span>
         <span class="js-stale-session-flash-switched" hidden>You switched accounts on another tab or window. <a class="Link--inTextBlock" href="">Reload</a> to refresh your session.</span>
 
-    <button id="icon-button-d5c14039-d77a-4900-b68d-d17afd36b012" aria-labelledby="tooltip-6fdd6499-3253-4e78-a9a1-36aa4f05e104" type="button" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium flash-close js-flash-close">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x Button-visual">
+    <button id="icon-button-9901e34b-e6b0-4a69-a4d5-7a5525b8e27a" aria-labelledby="tooltip-ac6e04f6-b337-489d-bfd5-c3f9b1727d21" type="button" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium flash-close js-flash-close">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x Button-visual">
     <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
 </svg>
-</button><tool-tip id="tooltip-6fdd6499-3253-4e78-a9a1-36aa4f05e104" for="icon-button-d5c14039-d77a-4900-b68d-d17afd36b012" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Dismiss alert</tool-tip>
+</button><tool-tip id="tooltip-ac6e04f6-b337-489d-bfd5-c3f9b1727d21" for="icon-button-9901e34b-e6b0-4a69-a4d5-7a5525b8e27a" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Dismiss alert</tool-tip>
 
 
   
