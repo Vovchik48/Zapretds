@@ -1,19 +1,28 @@
 package com.zapret.android;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.cardview.widget.CardView;
 
 public class MainActivity extends Activity {
     
     private static final int VPN_REQUEST_CODE = 100;
     private Button connectButton, disconnectButton;
-    private TextView statusText;
-    private boolean isVpnActive = false;
+    private TextView statusText, statusInfo;
+    private ImageView statusIcon;
+    private CardView statusCard;
+    private Animation pulseAnimation;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +32,17 @@ public class MainActivity extends Activity {
         connectButton = findViewById(R.id.btn_connect);
         disconnectButton = findViewById(R.id.btn_disconnect);
         statusText = findViewById(R.id.status_text);
+        statusInfo = findViewById(R.id.status_info);
+        statusIcon = findViewById(R.id.status_icon);
+        statusCard = findViewById(R.id.status_card);
+        
+        pulseAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
         
         connectButton.setOnClickListener(v -> startVpn());
         disconnectButton.setOnClickListener(v -> stopVpn());
         
         disconnectButton.setEnabled(false);
+        updateUI(false);
     }
     
     private void startVpn() {
@@ -47,12 +62,10 @@ public class MainActivity extends Activity {
             serviceIntent.setAction(ZapretVpnService.ACTION_CONNECT);
             startService(serviceIntent);
             
-            isVpnActive = true;
-            statusText.setText("Status: Active (Bypassing DPI)");
-            statusText.setTextColor(0xFF4CAF50);
-            connectButton.setEnabled(false);
-            disconnectButton.setEnabled(true);
-            Toast.makeText(this, "Zapret started - Bypassing Telegram, YouTube, Discord", Toast.LENGTH_LONG).show();
+            updateUI(true);
+            animateStatusChange(true);
+            
+            Toast.makeText(this, "Zapret VPN Activated\nBypassing DPI blocks", Toast.LENGTH_LONG).show();
         }
     }
     
@@ -61,11 +74,47 @@ public class MainActivity extends Activity {
         serviceIntent.setAction(ZapretVpnService.ACTION_DISCONNECT);
         startService(serviceIntent);
         
-        isVpnActive = false;
-        statusText.setText("Status: Stopped");
-        statusText.setTextColor(0xFFF44336);
-        connectButton.setEnabled(true);
-        disconnectButton.setEnabled(false);
-        Toast.makeText(this, "Zapret stopped", Toast.LENGTH_SHORT).show();
+        updateUI(false);
+        animateStatusChange(false);
+        
+        Toast.makeText(this, "Zapret VPN Stopped", Toast.LENGTH_SHORT).show();
+    }
+    
+    private void updateUI(boolean isActive) {
+        if (isActive) {
+            statusText.setText("Status: Active");
+            statusText.setTextColor(getColor(0xFF4CAF50));
+            statusInfo.setText("Bypassing DPI blocks");
+            statusIcon.setColorFilter(getColor(0xFF4CAF50));
+            connectButton.setEnabled(false);
+            disconnectButton.setEnabled(true);
+        } else {
+            statusText.setText("Status: Stopped");
+            statusText.setTextColor(getColor(0xFFF44336));
+            statusInfo.setText("Tap START to activate");
+            statusIcon.setColorFilter(getColor(0xFF666666));
+            connectButton.setEnabled(true);
+            disconnectButton.setEnabled(false);
+        }
+    }
+    
+    private void animateStatusChange(boolean isActive) {
+        // Анимация цвета карточки
+        int colorFrom = getColor(0xFFFFFFFF);
+        int colorTo = isActive ? getColor(0xFFE8F5E9) : getColor(0xFFFFFFFF);
+        
+        ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnim.setDuration(300);
+        colorAnim.addUpdateListener(animator -> {
+            statusCard.setCardBackgroundColor((int) animator.getAnimatedValue());
+        });
+        colorAnim.start();
+        
+        // Анимация иконки
+        statusIcon.startAnimation(pulseAnimation);
+    }
+    
+    private int getColor(int color) {
+        return color;
     }
 }
