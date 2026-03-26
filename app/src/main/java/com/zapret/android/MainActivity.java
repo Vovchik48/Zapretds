@@ -13,6 +13,7 @@ public class MainActivity extends Activity {
     private static final int VPN_REQUEST_CODE = 100;
     private Button connectButton, disconnectButton;
     private TextView statusText;
+    private boolean isVpnActive = false;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +44,24 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VPN_REQUEST_CODE && resultCode == RESULT_OK) {
             Intent serviceIntent = new Intent(this, ZapretVpnService.class);
+            serviceIntent.setAction(ZapretVpnService.ACTION_CONNECT);
             startService(serviceIntent);
             
-            statusText.setText("Status: Active");
+            isVpnActive = true;
+            statusText.setText("Status: Active (Bypassing DPI)");
             statusText.setTextColor(0xFF4CAF50);
             connectButton.setEnabled(false);
             disconnectButton.setEnabled(true);
-            Toast.makeText(this, "Zapret started", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Zapret started - Bypassing Telegram, YouTube, Discord", Toast.LENGTH_LONG).show();
         }
     }
     
     private void stopVpn() {
         Intent serviceIntent = new Intent(this, ZapretVpnService.class);
-        stopService(serviceIntent);
+        serviceIntent.setAction(ZapretVpnService.ACTION_DISCONNECT);
+        startService(serviceIntent);
         
+        isVpnActive = false;
         statusText.setText("Status: Stopped");
         statusText.setTextColor(0xFFF44336);
         connectButton.setEnabled(true);
