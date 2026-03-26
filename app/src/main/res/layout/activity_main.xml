@@ -45,7 +45,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="✓ Bypasses DPI blocks\n✓ Telegram, YouTube, Discord\n✓ No root required\n✓ Split HTTP & TLS modification"
+        android:text="✓ Bypasses DPI blocks\n✓ Telegram, YouTube, Discord\n✓ No root required\n✓ Split HTTP and TLS modification"
         android:textSize="12sp"
         android:textColor="#666"
         android:gravity="center"
