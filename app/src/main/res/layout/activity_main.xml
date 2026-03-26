@@ -23,15 +23,6 @@
         android:text="Status: Stopped"
         android:textSize="18sp"
         android:textColor="#F44336"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:id="@+id/status_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tap START to activate"
-        android:textSize="12sp"
-        android:textColor="#666"
         android:layout_marginBottom="32dp"/>
 
     <Button
@@ -39,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="START VPN"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:backgroundTint="#4CAF50"
         android:layout_marginBottom="16dp"/>
 
@@ -48,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="STOP VPN"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:backgroundTint="#F44336"/>
 
 </LinearLayout>

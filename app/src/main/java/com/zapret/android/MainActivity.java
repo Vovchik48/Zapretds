@@ -12,7 +12,7 @@ public class MainActivity extends Activity {
     
     private static final int VPN_REQUEST_CODE = 100;
     private Button connectButton, disconnectButton;
-    private TextView statusText, statusInfo;
+    private TextView statusText;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,6 @@ public class MainActivity extends Activity {
         connectButton = findViewById(R.id.btn_connect);
         disconnectButton = findViewById(R.id.btn_disconnect);
         statusText = findViewById(R.id.status_text);
-        statusInfo = findViewById(R.id.status_info);
         
         connectButton.setOnClickListener(v -> startVpn());
         disconnectButton.setOnClickListener(v -> stopVpn());
@@ -49,11 +48,9 @@ public class MainActivity extends Activity {
             
             statusText.setText("Status: Active");
             statusText.setTextColor(0xFF4CAF50);
-            statusInfo.setText("Bypassing DPI blocks");
             connectButton.setEnabled(false);
             disconnectButton.setEnabled(true);
-            
-            Toast.makeText(this, "Zapret VPN Activated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Zapret started", Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -64,10 +61,8 @@ public class MainActivity extends Activity {
         
         statusText.setText("Status: Stopped");
         statusText.setTextColor(0xFFF44336);
-        statusInfo.setText("Tap START to activate");
         connectButton.setEnabled(true);
         disconnectButton.setEnabled(false);
-        
-        Toast.makeText(this, "Zapret VPN Stopped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Zapret stopped", Toast.LENGTH_SHORT).show();
     }
 }
