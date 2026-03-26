@@ -67,7 +67,7 @@ class PacketProcessor {
                 val bitsToCheck = min(8, prefixLen - bitsChecked)
                 val mask = (0xFF shl (8 - bitsToCheck)).toByte()
                 
-                if ((ipBytes[i] and mask) != (netBytes[i] and mask)) {
+                if ((ipBytes[i].toInt() and mask.toInt()) != (netBytes[i].toInt() and mask.toInt())) {
                     return false
                 }
                 bitsChecked += bitsToCheck
@@ -178,8 +178,11 @@ class PacketProcessor {
         
         if (packet.size <= dataStart + 5) return packet
         
-        // Простая модификация TLS ClientHello
-        if (packet[dataStart] == 0x16 && packet[dataStart + 5] == 0x01) {
+        // Проверяем, что это TLS ClientHello
+        val isTls = packet[dataStart].toInt() == 0x16
+        val isClientHello = packet[dataStart + 5].toInt() == 0x01
+        
+        if (isTls && isClientHello) {
             val modified = packet.copyOf()
             // Меняем версию TLS на 1.2
             modified[dataStart + 1] = 0x03
